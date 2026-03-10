@@ -2,12 +2,35 @@ import Logo from "./Logo";
 import PipelineAnimation from "./animations/PipelineAnimation";
 import PixelDots from "./animations/PixelDots";
 
-const CheckIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="flex-shrink-0 mt-0.5">
-    <rect width="20" height="20" rx="6" fill="#0084C5" />
-    <path d="M5.5 10.5l3 3 6-7" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
+const items = [
+  {
+    text: "Turn PDFs, emails, and scans into data your systems can use",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="flex-shrink-0 mt-0.5">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="#0084C5" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+        <polyline points="14,2 14,8 20,8" stroke="#0084C5" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+        <line x1="16" y1="13" x2="8" y2="13" stroke="#0084C5" strokeWidth="1.8" strokeLinecap="round"/>
+        <line x1="16" y1="17" x2="8" y2="17" stroke="#0084C5" strokeWidth="1.8" strokeLinecap="round"/>
+      </svg>
+    ),
+  },
+  {
+    text: "Go live in minutes, no training needed",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="flex-shrink-0 mt-0.5">
+        <polygon points="13,2 3,14 12,14 11,22 21,10 12,10" stroke="#0084C5" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    ),
+  },
+  {
+    text: "Built for production, privacy, and scale",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="flex-shrink-0 mt-0.5">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="#0084C5" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    ),
+  },
+];
 
 export default function Hero1() {
   return (
@@ -33,7 +56,7 @@ export default function Hero1() {
       </nav>
 
       {/* Hero body */}
-      <div className="relative flex flex-1 items-center max-w-6xl mx-auto w-full px-10 py-16 gap-20">
+      <div className="relative flex flex-1 items-center max-w-6xl mx-auto w-full px-10 py-[60px] gap-20">
         {/* Left — copy */}
         <div className="flex-1 min-w-0">
           <span className="inline-block text-[#0084C5] text-sm font-semibold tracking-widest uppercase mb-6">
@@ -50,14 +73,10 @@ export default function Hero1() {
 
           {/* Checklist with new square-check icons */}
           <ul className="flex flex-col gap-3.5 mb-10 text-[#003854] text-[15px]">
-            {[
-              "Turn PDFs, emails, and scans into data your systems can use",
-              "Go live in minutes, no training needed",
-              "Built for production, privacy, and scale",
-            ].map(item => (
-              <li key={item} className="flex items-start gap-3">
-                <CheckIcon />
-                {item}
+            {items.map(({ icon, text }) => (
+              <li key={text} className="flex items-start gap-3">
+                {icon}
+                {text}
               </li>
             ))}
           </ul>
@@ -67,7 +86,7 @@ export default function Hero1() {
             <a href="#" className="btn-hero1-primary bg-[#0084C5] text-white px-7 py-3.5 rounded-md text-[16px] font-semibold hover:bg-[#006fa8]">
               Sign up for free
             </a>
-            <a href="#" className="btn-hero1-secondary border-2 border-[#003854]/30 text-[#003854] px-7 py-3.5 rounded-md text-[16px] font-semibold hover:border-[#003854] hover:bg-[#003854]/5">
+            <a href="#" className="btn-hero1-secondary border border-[#003854]/30 text-[#003854] px-7 py-3.5 rounded-md text-[16px] font-semibold hover:border-[#003854] hover:bg-[#003854]/5">
               Book a demo
             </a>
           </div>

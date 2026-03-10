@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 
 const VERSIONS = [
-  { id: "hero-1", label: "Option 1", desc: "Pure White"  },
-  { id: "hero-2", label: "Option 2", desc: "Dark Navy"   },
+  { id: "hero-1",  label: "Option 1",   desc: "Pure White"     },
+  { id: "hero-1b", label: "Option 1.2", desc: "Center Aligned" },
+  { id: "hero-2",  label: "Option 2",   desc: "Dark Navy"      },
   { id: "hero-3", label: "Option 3", desc: "Split"       },
   { id: "hero-4", label: "Option 4", desc: "Blue Bar"    },
   { id: "hero-5", label: "Option 5", desc: "Gradient"    },

@@ -34,16 +34,37 @@ export default function Hero3() {
           </p>
           <ul className="flex flex-col gap-3 mb-10 text-[#003854] text-[15px]">
             {[
-              "Turn PDFs, emails, and scans into data your systems can use",
-              "Go live in minutes, no training needed",
-              "Built for production, privacy, and scale",
-            ].map(item => (
-              <li key={item} className="flex items-start gap-3">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="flex-shrink-0 mt-0.5">
-                  <rect width="20" height="20" rx="6" fill="#0084C5"/>
-                  <path d="M5.5 10.5l3 3 6-7" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-                {item}
+              {
+                text: "Turn PDFs, emails, and scans into data your systems can use",
+                icon: (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="flex-shrink-0 mt-0.5">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="#0084C5" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                    <polyline points="14,2 14,8 20,8" stroke="#0084C5" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                    <line x1="16" y1="13" x2="8" y2="13" stroke="#0084C5" strokeWidth="1.8" strokeLinecap="round"/>
+                    <line x1="16" y1="17" x2="8" y2="17" stroke="#0084C5" strokeWidth="1.8" strokeLinecap="round"/>
+                  </svg>
+                ),
+              },
+              {
+                text: "Go live in minutes, no training needed",
+                icon: (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="flex-shrink-0 mt-0.5">
+                    <polygon points="13,2 3,14 12,14 11,22 21,10 12,10" stroke="#0084C5" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                ),
+              },
+              {
+                text: "Built for production, privacy, and scale",
+                icon: (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="flex-shrink-0 mt-0.5">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="#0084C5" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                ),
+              },
+            ].map(({ icon, text }) => (
+              <li key={text} className="flex items-start gap-3">
+                {icon}
+                {text}
               </li>
             ))}
           </ul>

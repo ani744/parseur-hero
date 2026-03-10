@@ -136,22 +136,23 @@ export default function FlowAnimation() {
         </div>
 
         {/* Status bar */}
-        <div className="mt-6 flex items-center justify-center gap-3">
+        <div className="mt-6 relative h-8 flex items-center justify-center">
           <div
-            style={{ transition: "opacity 0.4s", opacity: done ? 1 : 0 }}
+            style={{ transition: "opacity 0.4s", opacity: done ? 1 : 0, position: "absolute" }}
             className="flex items-center gap-2 bg-green-50 border border-green-200 rounded-full px-4 py-1.5"
           >
-            <span className="w-2 h-2 rounded-full bg-green-400" style={{ animation: "blink 1.4s ease-in-out infinite" }} />
+            <span className="w-2 h-2 rounded-full bg-green-400 self-center flex-shrink-0" style={{ animation: "blink 1.4s ease-in-out infinite" }} />
             <span className="text-xs font-semibold text-green-600">Data ready — 4 fields extracted</span>
           </div>
-          {!done && activeStage > 0 && (
-            <div className="flex items-center gap-2 bg-[#0084C5]/5 border border-[#0084C5]/20 rounded-full px-4 py-1.5">
-              <div className="w-2 h-2 rounded-full bg-[#0084C5]" style={{ animation: "blink 0.7s ease-in-out infinite" }} />
-              <span className="text-xs font-semibold text-[#0084C5]">
-                {STAGES.find(s => s.id === activeStage)?.label}ing…
-              </span>
-            </div>
-          )}
+          <div
+            style={{ transition: "opacity 0.4s", opacity: (!done && activeStage > 0) ? 1 : 0, position: "absolute" }}
+            className="flex items-center gap-2 bg-[#0084C5]/5 border border-[#0084C5]/20 rounded-full px-4 py-1.5"
+          >
+            <div className="w-2 h-2 rounded-full bg-[#0084C5] self-center flex-shrink-0" style={{ animation: "blink 0.7s ease-in-out infinite" }} />
+            <span className="text-xs font-semibold text-[#0084C5]">
+              {STAGES.find(s => s.id === activeStage)?.label}ing…
+            </span>
+          </div>
         </div>
       </div>
     </div>

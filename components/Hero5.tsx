@@ -36,19 +36,43 @@ export default function Hero5() {
           </p>
           <ul className="flex flex-col gap-3 mb-10 text-white/75 text-[15px]">
             {[
-              "Turn PDFs, emails, and scans into data your systems can use",
-              "Go live in minutes, no training needed",
-              "Built for production, privacy, and scale",
-            ].map(item => (
-              <li key={item} className="flex items-start gap-3">
-                <span className="w-5 h-5 bg-white/15 border border-white/25 rounded-full flex items-center justify-center text-white text-xs flex-shrink-0 mt-0.5">✓</span>
-                {item}
+              {
+                text: "Turn PDFs, emails, and scans into data your systems can use",
+                icon: (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="flex-shrink-0 mt-0.5">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="#5cc8ff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                    <polyline points="14,2 14,8 20,8" stroke="#5cc8ff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                    <line x1="16" y1="13" x2="8" y2="13" stroke="#5cc8ff" strokeWidth="1.8" strokeLinecap="round"/>
+                    <line x1="16" y1="17" x2="8" y2="17" stroke="#5cc8ff" strokeWidth="1.8" strokeLinecap="round"/>
+                  </svg>
+                ),
+              },
+              {
+                text: "Go live in minutes, no training needed",
+                icon: (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="flex-shrink-0 mt-0.5">
+                    <polygon points="13,2 3,14 12,14 11,22 21,10 12,10" stroke="#5cc8ff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                ),
+              },
+              {
+                text: "Built for production, privacy, and scale",
+                icon: (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="flex-shrink-0 mt-0.5">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="#5cc8ff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                ),
+              },
+            ].map(({ icon, text }) => (
+              <li key={text} className="flex items-start gap-3">
+                {icon}
+                {text}
               </li>
             ))}
           </ul>
           <div className="flex items-center gap-4">
-            <a href="#" className="border-2 border-white/40 text-white px-7 py-3.5 rounded-md text-[16px] font-semibold hover:bg-white/10 hover:border-white transition-colors">Book a demo</a>
             <a href="#" className="bg-white text-[#003854] px-7 py-3.5 rounded-md text-[16px] font-semibold hover:bg-white/90 transition-colors shadow-lg shadow-black/20">Sign up for free</a>
+            <a href="#" className="border border-white/40 text-white px-7 py-3.5 rounded-md text-[16px] font-semibold hover:bg-white/10 hover:border-white transition-colors">Book a demo</a>
           </div>
         </div>
 

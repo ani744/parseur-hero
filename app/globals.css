@@ -171,6 +171,14 @@
   50%       { color: #00a8f5; text-shadow: 0 0 32px rgba(0,132,197,0.35), 0 0 8px rgba(0,132,197,0.2); }
 }
 
+/* Pixel rising from bottom to top */
+@keyframes pixelRise {
+  0%   { transform: translateY(0)       translateX(0);            opacity: 0; }
+  8%   { opacity: var(--max-op); }
+  85%  { opacity: calc(var(--max-op) * 0.4); }
+  100% { transform: translateY(-105vh)  translateX(var(--drift));  opacity: 0; }
+}
+
 /* Pixel dot float paths — 8 organic variants */
 @keyframes floatA {
   0%,100% { transform: translate(0px,   0px);   opacity: var(--dot-lo); }

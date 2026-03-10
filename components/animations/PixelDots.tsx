@@ -1,136 +1,141 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-
-const FLOAT_ANIMS = ["floatA", "floatB", "floatC", "floatD", "floatE", "floatF", "floatG", "floatH"];
-
-interface Dot {
-  x: number;
-  y: number;
-  size: number;
-  baseOpacity: number;
-  peakOpacity: number;
-  duration: number;
-  delay: number;
-  anim: string;
-  type: "circle" | "square";
-}
+import { useEffect, useRef } from "react";
 
 const REPEL_RADIUS = 130;
 const REPEL_STRENGTH = 90;
 
+interface Particle {
+  x: number;
+  y: number;
+  size: number;
+  maxOp: number;
+  speed: number;    // px/s upward
+  driftX: number;   // px/s horizontal
+  type: "circle" | "square";
+  repelX: number;
+  repelY: number;
+}
+
 export default function PixelDots({ count = 80 }: { count?: number }) {
-  const [dots, setDots] = useState<Dot[]>([]);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const wrapperRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const mouseRef = useRef({ x: -9999, y: -9999 });
   const rafRef = useRef<number>(0);
+  const particlesRef = useRef<Particle[]>([]);
+  const lastTimeRef = useRef<number>(0);
 
-  // Generate dots once on mount
   useEffect(() => {
-    setDots(
-      Array.from({ length: count }, () => {
-        const base = Math.random() * 0.15 + 0.08;
-        const peak = Math.random() * 0.35 + 0.28;
-        return {
-          x:           Math.random() * 100,
-          y:           Math.random() * 100,
-          size:        Math.random() * 3.2 + 0.8,
-          baseOpacity: base,
-          peakOpacity: peak,
-          duration:    Math.random() * 6 + 5,
-          delay:       Math.random() * 6,
-          anim:        FLOAT_ANIMS[Math.floor(Math.random() * FLOAT_ANIMS.length)],
-          type:        Math.random() > 0.45 ? "circle" : "square",
-        };
-      })
-    );
-  }, [count]);
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d")!;
 
-  // Cursor repulsion loop
-  useEffect(() => {
-    if (dots.length === 0) return;
+    const init = () => {
+      const w = canvas.offsetWidth;
+      const h = canvas.offsetHeight;
+      canvas.width = w;
+      canvas.height = h;
+      // Start particles at random y so they're visible immediately
+      particlesRef.current = Array.from({ length: count }, () => ({
+        x:      Math.random() * w,
+        y:      Math.random() * h,
+        size:   Math.random() * 3.2 + 0.8,
+        maxOp:  Math.random() * 0.3 + 0.7,
+        speed:  Math.random() * 18 + 10,   // 10–28 px/s (slow)
+        driftX: (Math.random() - 0.5) * 8,
+        type:   Math.random() > 0.45 ? "circle" : "square",
+        repelX: 0,
+        repelY: 0,
+      }));
+    };
+
+    init();
+
+    const ro = new ResizeObserver(init);
+    ro.observe(canvas);
 
     const onMouseMove = (e: MouseEvent) => {
-      const rect = containerRef.current?.getBoundingClientRect();
-      if (!rect) return;
+      const rect = canvas.getBoundingClientRect();
       mouseRef.current = { x: e.clientX - rect.left, y: e.clientY - rect.top };
     };
+    const onMouseLeave = () => { mouseRef.current = { x: -9999, y: -9999 }; };
+    document.addEventListener("mousemove", onMouseMove);
+    document.addEventListener("mouseleave", onMouseLeave);
 
-    const onMouseLeave = () => {
-      mouseRef.current = { x: -9999, y: -9999 };
-    };
+    const tick = (time: number) => {
+      const dt = Math.min((time - (lastTimeRef.current || time)) / 1000, 0.05);
+      lastTimeRef.current = time;
 
-    const tick = () => {
-      const container = containerRef.current;
-      if (!container) { rafRef.current = requestAnimationFrame(tick); return; }
+      const { width: w, height: h } = canvas;
+      ctx.clearRect(0, 0, w, h);
 
-      const { width, height } = container.getBoundingClientRect();
       const { x: mx, y: my } = mouseRef.current;
 
-      wrapperRefs.current.forEach((el, i) => {
-        if (!el) return;
-        const dot = dots[i];
-        const dx = dot.x / 100 * width  - mx;
-        const dy = dot.y / 100 * height - my;
-        const dist = Math.sqrt(dx * dx + dy * dy);
+      for (const p of particlesRef.current) {
+        // Move upward + drift
+        p.y -= p.speed * dt;
+        p.x += p.driftX * dt;
 
-        let px = 0, py = 0;
+        // Wrap: reset to bottom when off top
+        if (p.y < -p.size) { p.y = h + p.size; p.x = Math.random() * w; }
+        if (p.x < 0) p.x = w;
+        if (p.x > w) p.x = 0;
+
+        // Cursor repulsion using actual visual position
+        const dx = p.x - mx;
+        const dy = p.y - my;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        let rx = 0, ry = 0;
         if (dist < REPEL_RADIUS && dist > 0) {
           const force = (REPEL_RADIUS - dist) / REPEL_RADIUS;
-          px = (dx / dist) * force * REPEL_STRENGTH;
-          py = (dy / dist) * force * REPEL_STRENGTH;
+          rx = (dx / dist) * force * REPEL_STRENGTH;
+          ry = (dy / dist) * force * REPEL_STRENGTH;
         }
+        p.repelX += (rx - p.repelX) * 0.15;
+        p.repelY += (ry - p.repelY) * 0.15;
 
-        el.style.setProperty("--px", `${px}px`);
-        el.style.setProperty("--py", `${py}px`);
-      });
+        // Opacity: fade in from bottom, fade out near top
+        const progress = 1 - p.y / h; // 0 = bottom, 1 = top
+        let op = p.maxOp;
+        if (progress < 0.08) op *= progress / 0.08;
+        else if (progress > 0.82) op *= Math.max(0, (1 - progress) / 0.18);
 
+        // Draw
+        const drawX = p.x + p.repelX;
+        const drawY = p.y + p.repelY;
+
+        ctx.globalAlpha = Math.max(0, op);
+        ctx.fillStyle = "#0af";
+        ctx.shadowColor = "rgba(0,170,255,1)";
+        ctx.shadowBlur = p.size > 2.5 ? 10 : 5;
+
+        if (p.type === "circle") {
+          ctx.beginPath();
+          ctx.arc(drawX, drawY, p.size / 2, 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          ctx.fillRect(drawX - p.size / 2, drawY - p.size / 2, p.size, p.size);
+        }
+      }
+
+      ctx.globalAlpha = 1;
+      ctx.shadowBlur = 0;
       rafRef.current = requestAnimationFrame(tick);
     };
 
-    document.addEventListener("mousemove", onMouseMove);
-    document.addEventListener("mouseleave", onMouseLeave);
     rafRef.current = requestAnimationFrame(tick);
 
     return () => {
+      ro.disconnect();
       document.removeEventListener("mousemove", onMouseMove);
       document.removeEventListener("mouseleave", onMouseLeave);
       cancelAnimationFrame(rafRef.current);
     };
-  }, [dots]);
+  }, [count]);
 
   return (
-    <div ref={containerRef} className="absolute inset-0 overflow-hidden pointer-events-none">
-      {dots.map((dot, i) => (
-        // Outer wrapper — handles cursor repulsion
-        <div
-          key={i}
-          ref={el => { wrapperRefs.current[i] = el; }}
-          style={{
-            position:   "absolute",
-            left:       `${dot.x}%`,
-            top:        `${dot.y}%`,
-            transform:  "translate(var(--px, 0px), var(--py, 0px))",
-            transition: "transform 0.5s cubic-bezier(0.23, 1, 0.32, 1)",
-            willChange: "transform",
-          } as React.CSSProperties}
-        >
-          {/* Inner dot — handles float + fade animation */}
-          <div
-            style={{
-              width:        dot.size,
-              height:       dot.size,
-              background:   "#00A3FF",   // vivid, saturated blue
-              borderRadius: dot.type === "circle" ? "50%" : "1px",
-              boxShadow:    dot.size > 2.5 ? "0 0 4px rgba(0,163,255,0.6)" : "none",
-              "--dot-lo":   dot.baseOpacity,
-              "--dot-hi":   dot.peakOpacity,
-              animation:    `${dot.anim} ${dot.duration}s ease-in-out ${dot.delay}s infinite`,
-            } as React.CSSProperties}
-          />
-        </div>
-      ))}
-    </div>
+    <canvas
+      ref={canvasRef}
+      className="absolute inset-0 w-full h-full pointer-events-none"
+    />
   );
 }

@@ -87,17 +87,16 @@ export default function CascadeAnimation() {
   const docVisible = docPhase === "entering" || docPhase === "processing" || docPhase === "leaving";
 
   return (
-    // Fixed total width — never reflows
-    <div style={{ width: 640, flexShrink: 0 }}>
+    <div style={{ width: 672 }}>
       <div
         style={{
-          width: 640,
+          width: 672,
           display: "flex",
-          alignItems: "center",
+          alignItems: "flex-start",
           gap: 16,
           padding: 24,
-          borderRadius: 16,
-          background: "linear-gradient(135deg, rgba(0,20,40,0.85) 0%, rgba(0,56,84,0.6) 100%)",
+          borderRadius: 12,
+          background: "linear-gradient(135deg, rgb(0,20,40) 0%, rgb(0,56,84) 100%)",
           border: "1px solid rgba(0,132,197,0.25)",
           boxShadow: "0 0 40px rgba(0,132,197,0.12), inset 0 1px 0 rgba(255,255,255,0.06)",
           backdropFilter: "blur(16px)",
@@ -105,13 +104,14 @@ export default function CascadeAnimation() {
         }}
       >
 
-        {/* ── Left: incoming PDF ── fixed 190px */}
-        <div style={{ width: 190, flexShrink: 0 }}>
+        {/* ── Left: incoming PDF ── flex 1 */}
+        <div style={{ flex: 1, minWidth: 0 }}>
           <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(92,200,255,0.5)", marginBottom: 10 }}>Incoming</p>
           <div
             style={{
-              width: 190,
-              minHeight: 120,
+              width: "100%",
+              height: 148,
+              boxSizing: "border-box",
               transition: "opacity 0.4s ease, transform 0.4s ease",
               opacity:   docVisible ? 1 : 0,
               transform: docPhase === "entering"   ? "translateX(0)"
@@ -139,35 +139,39 @@ export default function CascadeAnimation() {
         </div>
 
         {/* ── Center: Parseur processor ── fixed 80px */}
-        <div style={{ width: 80, flexShrink: 0, display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
-          <div style={{ display: "flex", gap: 4 }}>
-            {[0,1,2,3,4].map(i => (
-              <div key={i} style={{
-                width: 5, height: 5, borderRadius: "50%",
-                transition: "background 0.3s",
-                background: active ? "#0084C5" : "rgba(255,255,255,0.12)",
-                ...(active ? { animation: `blink 0.7s ease-in-out ${i * 0.12}s infinite`, boxShadow: "0 0 5px rgba(0,132,197,0.8)" } : {}),
-              }} />
-            ))}
-          </div>
+        <div style={{ width: 80, flexShrink: 0 }}>
+          {/* Spacer matching label height so Parseur circle aligns with the cards */}
+          <div style={{ height: 22 }} />
+          <div style={{ height: 148, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 8 }}>
+            <div style={{ display: "flex", gap: 4 }}>
+              {[0,1,2,3,4].map(i => (
+                <div key={i} style={{
+                  width: 5, height: 5, borderRadius: "50%",
+                  transition: "background 0.3s",
+                  background: active ? "#0084C5" : "rgba(255,255,255,0.12)",
+                  ...(active ? { animation: `blink 0.7s ease-in-out ${i * 0.12}s infinite`, boxShadow: "0 0 5px rgba(0,132,197,0.8)" } : {}),
+                }} />
+              ))}
+            </div>
 
-          <div style={{
-            width: 60, height: 60, borderRadius: "50%",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            transition: "all 0.3s",
-            background: active ? "linear-gradient(135deg, rgba(0,132,197,0.25), rgba(0,168,240,0.1))" : "rgba(255,255,255,0.04)",
-            border: active ? "1.5px solid rgba(0,168,240,0.7)" : "1.5px solid rgba(255,255,255,0.12)",
-            boxShadow: active ? "0 0 20px rgba(0,132,197,0.5), 0 0 40px rgba(0,132,197,0.2)" : "none",
-          }}>
-            <ParseurMark active={active} />
-          </div>
+            <div style={{
+              width: 60, height: 60, borderRadius: "50%",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              transition: "all 0.3s",
+              background: active ? "linear-gradient(135deg, rgba(0,132,197,0.25), rgba(0,168,240,0.1))" : "rgba(255,255,255,0.04)",
+              border: active ? "1.5px solid rgba(0,168,240,0.7)" : "1.5px solid rgba(255,255,255,0.12)",
+              boxShadow: active ? "0 0 20px rgba(0,132,197,0.5), 0 0 40px rgba(0,132,197,0.2)" : "none",
+            }}>
+              <ParseurMark active={active} />
+            </div>
 
-          <div style={{ fontSize: 9, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: active ? "#5cc8ff" : "rgba(255,255,255,0.2)", transition: "color 0.3s", textAlign: "center" }}>
-            {active ? "Parsing" : "Parseur"}
+            <div style={{ fontSize: 9, fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: active ? "#5cc8ff" : "rgba(255,255,255,0.2)", transition: "color 0.3s", textAlign: "center" }}>
+              {active ? "Parsing" : "Parseur"}
+            </div>
           </div>
         </div>
 
-        {/* ── Right: structured data ── fills remaining space */}
+        {/* ── Right: structured data ── flex 1 */}
         <div style={{ flex: 1, minWidth: 0 }}>
           <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "rgba(92,200,255,0.5)", marginBottom: 10 }}>Structured Data</p>
           <div style={{
@@ -175,7 +179,7 @@ export default function CascadeAnimation() {
             border: "1px solid rgba(0,132,197,0.2)",
             borderRadius: 12,
             padding: 14,
-            minHeight: 120,
+            height: 148,
           }}>
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               {doc.fields.map((field, i) => (
