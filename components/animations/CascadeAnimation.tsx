@@ -121,7 +121,6 @@ export default function CascadeAnimation() {
               border: "1px solid rgba(0,132,197,0.3)",
               borderRadius: 12,
               padding: 14,
-              boxSizing: "border-box",
             }}
           >
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
